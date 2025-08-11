@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Pocket Money System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --success-dark: #047857;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --secondary: #6b7280;
+            --secondary-dark: #4b5563;
+            --light: #f9fafb;
+            --dark: #111827;
+            --gray: #6b7280;
+            --light-gray: #e5e7eb;
+            --white: #ffffff;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light);
+            line-height: 1.6;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: var(--gray);
+        }
+
+        .header-stats {
+            text-align: right;
+        }
+
+        .header-stats .balance {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .header-stats .stats-info {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        /* Student List */
+        .students-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .student-card {
+            padding: 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .student-card:hover {
+            border-color: #d1d5db;
+        }
+
+        .student-card.selected {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-details h3 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .student-details p {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .student-balance {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .balance-amount {
+            font-size: 1.125rem;
+            font-weight: bold;
+        }
+
+        .balance-positive {
+            color: var(--success);
+        }
+
+        .balance-negative {
+            color: var(--danger);
+        }
+
+        /* Student Details Panel */
+        .student-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            width: 48px;
+            height: 48px;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .balance-card {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .balance-label {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .balance-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        /* Transactions */
+        .transactions-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .transactions-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            border: 1px solid;
+        }
+
+        .transaction-deposit {
+            border-color: #d1fae5;
+            background-color: #f0fdf4;
+        }
+
+        .transaction-withdrawal {
+            border-color: #fecaca;
+            background-color: #fef2f2;
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 8px;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .amount-positive {
+            color: var(--success-dark);
+        }
+
+        .amount-negative {
+            color: var(--danger-dark);
+        }
+
+        .transaction-date {
+            color: var(--gray);
+            font-size: 0.75rem;
+        }
+
+        .transaction-note {
+            color: var(--gray);
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .transaction-type {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .type-deposit {
+            background-color: #d1fae5;
+            color: var(--success-dark);
+        }
+
+        .type-withdrawal {
+            background-color: #fecaca;
+            color: var(--danger-dark);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .transaction-types {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-button {
+            flex: 1;
+            padding: 8px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            background: var(--light);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .type-button.active.deposit {
+            background: #d1fae5;
+            border-color: var(--success);
+            color: var(--success-dark);
+        }
+
+        .type-button.active.withdrawal {
+            background: #fecaca;
+            border-color: var(--danger);
+            color: var(--danger-dark);
+        }
+
+        .balance-preview {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+        }
+
+        .empty-state-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            color: var(--gray);
+            font-size: 2rem;
+        }
+
+        .empty-state-text {
+            color: var(--gray);
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .summary-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            padding: 16px;
+        }
+
+        .summary-card-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .summary-icon.blue {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .summary-icon.green {
+            background: #d1fae5;
+            color: var(--success-dark);
+        }
+
+        .summary-icon.red {
+            background: #fecaca;
+            color: var(--danger-dark);
+        }
+
+        .summary-text .label {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .summary-text .value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--light-gray);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark);
+            color: var(--white);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1100;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-stats .balance {
+                font-size: 1.2rem;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .transaction-types {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>School Pocket Money System</h1>
+                    <p>Bursar Dashboard - Track Student Finances</p>
+                </div>
+                <div class="header-stats">
+                    <div class="balance" id="totalBalance">UGX 0</div>
+                    <div class="stats-info">
+                        <span id="totalStudents">0</span> Students
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Students List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Students</h2>
+                    <button class="btn btn-primary" onclick="showAddStudentModal()">
+                        <span>+</span> Add Student
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Search by name or class..."
+                        id="searchInput"
+                        oninput="filterStudents()"
+                    >
+                </div>
+
+                <!-- Students List -->
+                <div class="students-list" id="studentsList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Details -->
+            <div class="card">
+                <div id="studentDetails">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <p class="empty-state-text">Select a student to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-card-content">
+                    <div class="summary-icon blue">👥</div>
+                    <div class="summary-text">
+                        <div class="label">Total Students</div>
+                        <div class="value" id="summaryStudents">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-content">
+                    <div class="summary-icon green">💰</div>
+                    <div class="summary-text">
+                        <div class="label">Total Deposits</div>
+                        <div class="value" id="summaryDeposits">UGX 0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-content">
+                    <div class="summary-icon red">💸</div>
+                    <div class="summary-text">
+                        <div class="label">Total Withdrawals</div>
+                        <div class="value" id="summaryWithdrawals">UGX 0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Student</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Student Name</label>
+                <input type="text" class="form-input" id="studentName" placeholder="Enter student name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Class</label>
+                <input type="text" class="form-input" id="studentClass" placeholder="e.g., P7A, S1C" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Initial Balance (UGX)</label>
+                <input type="number" class="form-input" id="initialBalance" placeholder="0" min="0" step="100" value="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideAddStudentModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="transactionModalTitle">Add Transaction</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Transaction Type</label>
+                <div class="transaction-types">
+                    <div class="type-button" id="depositBtn" onclick="setTransactionType('deposit')">Deposit</div>
+                    <div class="type-button" id="withdrawalBtn" onclick="setTransactionType('withdrawal')">Withdrawal</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount (UGX)</label>
+                <input type="number" class="form-input" id="transactionAmount" placeholder="0" min="1" step="100" oninput="updateBalancePreview()" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Note (Optional)</label>
+                <input type="text" class="form-input" id="transactionNote" placeholder="e.g., Lunch money, Book purchase">
+            </div>
+            <div class="balance-preview">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span class="label">Current Balance:</span>
+                    <span id="currentBalance">UGX 0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span class="label">New Balance:</span>
+                    <span id="newBalance">UGX 0</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideTransactionModal()">Cancel</button>
+                <button class="btn" id="transactionSubmitBtn" onclick="processTransaction()">Process</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            getDocs,
+            updateDoc,
+            deleteDoc,
+            onSnapshot
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBsbgiwz6_V-iAUwVE4n4HF4c7Z80FIOlE",
+            authDomain: "pocket-money-fcb43.firebaseapp.com",
+            projectId: "pocket-money-fcb43",
+            storageBucket: "pocket-money-fcb43.appspot.com",
+            messagingSenderId: "885485777319",
+            appId: "1:885485777319:web:b0123c3dc6fc21bf4e0682",
+            measurementId: "G-Z3YBVFFLJE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make Firebase functions available globally
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.getDocs = getDocs;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudents();
+            setupRealtimeUpdates();
+        });
+    </script>
+
+    <script>
+        // Global variables
+        let students = [];
+        let selectedStudent = null;
+        let currentTransactionType = 'deposit';
+        let isOnline = navigator.onLine;
+
+        // Check network status
+        window.addEventListener('online', () => {
+            isOnline = true;
+            showToast('Back online. Syncing data...', 'success');
+            syncLocalChanges();
+        });
+        
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            showToast('Offline mode. Changes will sync when back online.', 'warning');
+        });
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-UG', {
+                style: 'currency',
+                currency: 'UGX',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+            return new Date(dateString).toLocaleDateString('en-UG', options);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            
+            // Set background color based on type
+            if (type === 'success') {
+                toast.style.backgroundColor = '#059669';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = '#dc2626';
+            } else if (type === 'warning') {
+                toast.style.backgroundColor = '#d97706';
+            } else {
+                toast.style.backgroundColor = '#111827';
+            }
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Setup realtime updates
+        function setupRealtimeUpdates() {
+            const studentsRef = window.collection(window.db, 'students');
+            
+            window.onSnapshot(studentsRef, (snapshot) => {
+                students = [];
+                snapshot.forEach((doc) => {
+                    students.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Sort students by name
+                students.sort((a, b) => a.name.localeCompare(b.name));
+                
+                renderStudents();
+                updateSummary();
+                
+                // If a student was selected, update the details
+                if (selectedStudent) {
+                    const updatedStudent = students.find(s => s.id === selectedStudent.id);
+                    if (updatedStudent) {
+                        selectedStudent = updatedStudent;
+                        renderStudentDetails();
+                    }
+                }
+            }, (error) => {
+                console.error('Error in realtime update:', error);
+                showToast('Error updating data. Please refresh.', 'error');
+            });
+        }
+
+        // Sync local changes when back online
+        async function syncLocalChanges() {
+            const localChanges = JSON.parse(localStorage.getItem('pendingChanges') || '[]');
+            
+            if (localChanges.length > 0) {
+                showToast(`Syncing ${localChanges.length} pending changes...`, 'info');
+                
+                try {
+                    for (const change of localChanges) {
+                        if (change.type === 'add') {
+                            await saveStudentToFirebase(change.data);
+                        } else if (change.type === 'update') {
+                            await saveStudentToFirebase(change.data);
+                        } else if (change.type === 'transaction') {
+                            await processTransactionDirect(change.studentId, change.transaction);
+                        }
+                    }
+                    
+                    // Clear pending changes
+                    localStorage.removeItem('pendingChanges');
+                    showToast('All changes synced successfully!', 'success');
+                } catch (error) {
+                    console.error('Error syncing changes:', error);
+                    showToast('Error syncing some changes. Please check.', 'error');
+                }
+            }
+        }
+
+        // Load students from Firebase
+        async function loadStudents() {
+            try {
+                const studentsRef = window.collection(window.db, 'students');
+                const snapshot = await window.getDocs(studentsRef);
+                
+                students = [];
+                snapshot.forEach((doc) => {
+                    students.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                // Sort students by name
+                students.sort((a, b) => a.name.localeCompare(b.name));
+                
+                renderStudents();
+                updateSummary();
+                
+                // Check for pending changes
+                if (localStorage.getItem('pendingChanges')) {
+                    showToast('You have pending changes that will sync when online', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Error loading students:', error);
+                // Fallback to localStorage
+                const savedStudents = localStorage.getItem('pocketMoneyStudents');
+                if (savedStudents) {
+                    students = JSON.parse(savedStudents);
+                    renderStudents();
+                    updateSummary();
+                    showToast('Using offline data. Some features may be limited.', 'warning');
+                } else {
+                    document.getElementById('studentsList').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <p class="empty-state-text">No students found</p>
+                        </div>
+                    `;
+                    showToast('Failed to load data. Please check your connection.', 'error');
+                }
+            }
+        }
+
+        // Save student to Firebase
+        async function saveStudentToFirebase(studentData) {
+            try {
+                if (!isOnline) {
+                    // Store changes locally
+                    const pendingChanges = JSON.parse(localStorage.getItem('pendingChanges') || '[]');
+                    pendingChanges.push({
+                        type: studentData.id in students ? 'update' : 'add',
+                        data: studentData,
+                        timestamp: new Date().toISOString()
+                    });
+                    localStorage.setItem('pendingChanges', JSON.stringify(pendingChanges));
+                    
+                    // Update local data
+                    const studentIndex = students.findIndex(s => s.id === studentData.id);
+                    if (studentIndex >= 0) {
+                        students[studentIndex] = studentData;
+                    } else {
+                        students.push(studentData);
+                    }
+                    localStorage.setItem('pocketMoneyStudents', JSON.stringify(students));
+                    
+                    showToast('Changes saved locally. Will sync when online.', 'warning');
+                    return;
+                }
+                
+                const studentRef = window.doc(window.db, 'students', studentData.id);
+                await window.setDoc(studentRef, studentData);
+                
+                // Also save to localStorage as backup
+                const studentIndex = students.findIndex(s => s.id === studentData.id);
+                if (studentIndex >= 0) {
+                    students[studentIndex] = studentData;
+                } else {
+                    students.push(studentData);
+                }
+                localStorage.setItem('pocketMoneyStudents', JSON.stringify(students));
+                
+                showToast('Student data saved successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error saving to Firebase:', error);
+                // Fallback to localStorage
+                const studentIndex = students.findIndex(s => s.id === studentData.id);
+                if (studentIndex >= 0) {
+                    students[studentIndex] = studentData;
+                } else {
+                    students.push(studentData);
+                }
+                localStorage.setItem('pocketMoneyStudents', JSON.stringify(students));
+                showToast('Saved locally. Will sync when back online.', 'warning');
+            }
+        }
+
+        // Render students list
+        function renderStudents() {
+            const studentsList = document.getElementById('studentsList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredStudents = students.filter(student =>
+                student.name.toLowerCase().includes(searchTerm) ||
+                (student.class && student.class.toLowerCase().includes(searchTerm))
+            );
+
+            if (filteredStudents.length === 0) {
+                studentsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <p class="empty-state-text">${searchTerm ? 'No students found matching your search' : 'No students added yet'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            studentsList.innerHTML = filteredStudents.map(student => `
+                <div class="student-card ${selectedStudent?.id === student.id ? 'selected' : ''}" 
+                     onclick="selectStudent('${student.id}')">
+                    <div class="student-info">
+                        <div class="student-details">
+                            <h3>${student.name}</h3>
+                            <p>Class: ${student.class || 'Not specified'}</p>
+                            <p style="color: #9ca3af; font-size: 0.75rem;">${student.transactions?.length || 0} transactions</p>
+                        </div>
+                        <div class="student-balance">
+                            <div class="balance-amount ${student.balance >= 0 ? 'balance-positive' : 'balance-negative'}">
+                                ${formatCurrency(student.balance || 0)}
+                            </div>
+                            <button class="btn btn-primary" style="font-size: 0.75rem; padding: 4px 8px; margin-top: 4px;"
+                                    onclick="event.stopPropagation(); showTransactionModal('${student.id}')">
+                                Add Transaction
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter students
+        function filterStudents() {
+            renderStudents();
+        }
+
+        // Select student
+        function selectStudent(studentId) {
+            selectedStudent = students.find(s => s.id === studentId);
+            renderStudents();
+            renderStudentDetails();
+        }
+
+        // Render student details
+        function renderStudentDetails() {
+            const detailsContainer = document.getElementById('studentDetails');
+            
+            if (!selectedStudent) {
+                detailsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <p class="empty-state-text">Select a student to view details</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const transactions = selectedStudent.transactions || [];
+            const initials = selectedStudent.name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            detailsContainer.innerHTML = `
+                <div class="student-profile">
+                    <div class="profile-avatar">${initials}</div>
+                    <div>
+                        <h3>${selectedStudent.name}</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem;">Class: ${selectedStudent.class || 'Not specified'}</p>
+                    </div>
+                </div>
+
+                <div class="balance-card">
+                    <div class="balance-label">Current Balance</div>
+                    <div class="balance-value ${selectedStudent.balance >= 0 ? 'balance-positive' : 'balance-negative'}">
+                        ${formatCurrency(selectedStudent.balance || 0)}
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="showTransactionModal('${selectedStudent.id}', 'deposit')">
+                        <span>+</span> Deposit
+                    </button>
+                    <button class="btn btn-danger" onclick="showTransactionModal('${selectedStudent.id}', 'withdrawal')">
+                        <span>-</span> Withdraw
+                    </button>
+                </div>
+
+                <div class="transactions-header">
+                    <span>📅</span>
+                    <h4 style="font-weight: 600;">Transaction History</h4>
+                </div>
+
+                <div class="transactions-list">
+                    ${transactions.length === 0 ? `
+                        <div class="empty-state" style="padding: 16px;">
+                            <p class="empty-state-text">No transactions yet</p>
+                        </div>
+                    ` : transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).map(transaction => `
+                        <div class="transaction-item transaction-${transaction.type}">
+                            <div class="transaction-header">
+                                <div>
+                                    <div class="transaction-amount ${transaction.type === 'deposit' ? 'amount-positive' : 'amount-negative'}">
+                                        ${transaction.type === 'deposit' ? '+' : '-'} ${formatCurrency(transaction.amount)}
+                                    </div>
+                                    <div class="transaction-date">${formatDate(transaction.date)}</div>
+                                    ${transaction.note ? `<div class="transaction-note">${transaction.note}</div>` : ''}
+                                </div>
+                                <div class="transaction-type type-${transaction.type}">
+                                    ${transaction.type}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Update summary
+        function updateSummary() {
+            const totalBalance = students.reduce((sum, student) => sum + (student.balance || 0), 0);
+            const totalDeposits = students.reduce((sum, student) => 
+                sum + ((student.transactions || [])
+                    .filter(t => t.type === 'deposit')
+                    .reduce((tSum, t) => tSum + t.amount, 0)), 0);
+            const totalWithdrawals = students.reduce((sum, student) => 
+                sum + ((student.transactions || [])
+                    .filter(t => t.type === 'withdrawal')
+                    .reduce((tSum, t) => tSum + t.amount, 0)), 0);
+
+            document.getElementById('totalBalance').textContent = formatCurrency(totalBalance);
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('summaryStudents').textContent = students.length;
+            document.getElementById('summaryDeposits').textContent = formatCurrency(totalDeposits);
+            document.getElementById('summaryWithdrawals').textContent = formatCurrency(totalWithdrawals);
+        }
+
+        // Show add student modal
+        function showAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('active');
+            document.getElementById('studentName').focus();
+        }
+
+        // Hide add student modal
+        function hideAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('active');
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentClass').value = '';
+            document.getElementById('initialBalance').value = '0';
+        }
+
+        // Add student
+        async function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const studentClass = document.getElementById('studentClass').value.trim();
+            const balance = parseFloat(document.getElementById('initialBalance').value) || 0;
+
+            if (!name) {
+                showToast('Please enter student name', 'error');
+                document.getElementById('studentName').focus();
+                return;
+            }
+
+            if (!studentClass) {
+                showToast('Please enter student class', 'error');
+                document.getElementById('studentClass').focus();
+                return;
+            }
+
+            const studentData = {
+                id: Date.now().toString(),
+                name: name,
+                class: studentClass,
+                balance: balance,
+                transactions: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            await saveStudentToFirebase(studentData);
+            renderStudents();
+            updateSummary();
+            hideAddStudentModal();
+            
+            // Select the newly added student
+            selectStudent(studentData.id);
+        }
+
+        // Show transaction modal
+        function showTransactionModal(studentId, type = 'deposit') {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+
+            selectedStudent = student;
+            currentTransactionType = type;
+            
+            document.getElementById('transactionModalTitle').textContent = 
+                `${type === 'deposit' ? 'Make Deposit' : 'Make Withdrawal'} - ${student.name}`;
+            
+            setTransactionType(type);
+            updateBalancePreview();
+            document.getElementById('transactionModal').classList.add('active');
+            document.getElementById('transactionAmount').focus();
+        }
+
+        // Hide transaction modal
+        function hideTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('active');
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionNote').value = '';
+        }
+
+        // Set transaction type
+        function setTransactionType(type) {
+            currentTransactionType = type;
+            
+            const depositBtn = document.getElementById('depositBtn');
+            const withdrawalBtn = document.getElementById('withdrawalBtn');
+            const submitBtn = document.getElementById('transactionSubmitBtn');
+
+            // Reset button states
+            depositBtn.classList.remove('active', 'deposit');
+            withdrawalBtn.classList.remove('active', 'withdrawal');
+
+            if (type === 'deposit') {
+                depositBtn.classList.add('active', 'deposit');
+                submitBtn.className = 'btn btn-success';
+                submitBtn.textContent = 'Make Deposit';
+            } else {
+                withdrawalBtn.classList.add('active', 'withdrawal');
+                submitBtn.className = 'btn btn-danger';
+                submitBtn.textContent = 'Make Withdrawal';
+            }
+
+            updateBalancePreview();
+        }
+
+        // Update balance preview
+        function updateBalancePreview() {
+            if (!selectedStudent) return;
+
+            const amount = parseFloat(document.getElementById('transactionAmount').value) || 0;
+            const currentBalance = selectedStudent.balance || 0;
+            const newBalance = currentTransactionType === 'deposit' 
+                ? currentBalance + amount 
+                : currentBalance - amount;
+
+            document.getElementById('currentBalance').textContent = formatCurrency(currentBalance);
+            document.getElementById('newBalance').textContent = formatCurrency(newBalance);
+            document.getElementById('newBalance').className = newBalance >= 0 ? 'balance-positive' : 'balance-negative';
+        }
+
+        // Process transaction directly (for offline support)
+        async function processTransactionDirect(studentId, transaction) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return false;
+
+            const newBalance = transaction.type === 'deposit' 
+                ? (student.balance || 0) + transaction.amount 
+                : (student.balance || 0) - transaction.amount;
+
+            const updatedStudent = {
+                ...student,
+                balance: newBalance,
+                transactions: [transaction, ...(student.transactions || [])],
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                if (isOnline) {
+                    await saveStudentToFirebase(updatedStudent);
+                } else {
+                    // Store transaction locally
+                    const pendingChanges = JSON.parse(localStorage.getItem('pendingChanges') || '[]');
+                    pendingChanges.push({
+                        type: 'transaction',
+                        studentId: studentId,
+                        transaction: transaction,
+                        timestamp: new Date().toISOString()
+                    });
+                    localStorage.setItem('pendingChanges', JSON.stringify(pendingChanges));
+                    
+                    // Update local data
+                    const studentIndex = students.findIndex(s => s.id === studentId);
+                    if (studentIndex >= 0) {
+                        students[studentIndex] = updatedStudent;
+                    }
+                    localStorage.setItem('pocketMoneyStudents', JSON.stringify(students));
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Error processing transaction:', error);
+                return false;
+            }
+        }
+
+        // Process transaction
+        async function processTransaction() {
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const note = document.getElementById('transactionNote').value.trim();
+
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'error');
+                document.getElementById('transactionAmount').focus();
+                return;
+            }
+
+            if (!selectedStudent) {
+                showToast('No student selected', 'error');
+                return;
+            }
+
+            const newBalance = currentTransactionType === 'deposit' 
+                ? (selectedStudent.balance || 0) + amount 
+                : (selectedStudent.balance || 0) - amount;
+
+            if (currentTransactionType === 'withdrawal' && newBalance < 0) {
+                showToast('Insufficient funds for withdrawal', 'error');
+                return;
+            }
+
+            const transaction = {
+                id: Date.now().toString(),
+                type: currentTransactionType,
+                amount: amount,
+                note: note,
+                date: new Date().toISOString(),
+                timestamp: Date.now()
+            };
+
+            const success = await processTransactionDirect(selectedStudent.id, transaction);
+            
+            if (success) {
+                // Update UI
+                const updatedStudent = {
+                    ...selectedStudent,
+                    balance: newBalance,
+                    transactions: [transaction, ...(selectedStudent.transactions || [])]
+                };
+                
+                selectedStudent = updatedStudent;
+                renderStudents();
+                renderStudentDetails();
+                updateSummary();
+                hideTransactionModal();
+                
+                showToast(`Transaction ${currentTransactionType} of ${formatCurrency(amount)} processed`, 'success');
+            } else {
+                showToast('Failed to process transaction. Please try again.', 'error');
+            }
+        }
+
+        // Modal event listeners
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            
+            // Ctrl+Enter in modals submits the form
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (document.getElementById('addStudentModal').classList.contains('active')) {
+                    addStudent();
+                } else if (document.getElementById('transactionModal').classList.contains('active')) {
+                    processTransaction();
+                }
+            }
+        });
+
+        // Initialize transaction type on page load
+        setTimeout(() => {
+            setTransactionType('deposit');
+        }, 100);
+    </script>
+</body>
+</html>
