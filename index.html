@@ -811,7 +811,8 @@
 
     <!-- Firebase Scripts -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics.js";
         import { 
             getFirestore, 
             collection, 
@@ -822,21 +823,22 @@
             updateDoc,
             deleteDoc,
             onSnapshot
-        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-        // Firebase Configuration
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyBsbgiwz6_V-iAUwVE4n4HF4c7Z80FIOlE",
-            authDomain: "pocket-money-fcb43.firebaseapp.com",
-            projectId: "pocket-money-fcb43",
-            storageBucket: "pocket-money-fcb43.appspot.com",
-            messagingSenderId: "885485777319",
-            appId: "1:885485777319:web:b0123c3dc6fc21bf4e0682",
-            measurementId: "G-Z3YBVFFLJE"
+            apiKey: "AIzaSyCrP90qHmgA5tnd8K2XglZ_Opp8vsWAffg",
+            authDomain: "pocket-money-pro-bef26.firebaseapp.com",
+            projectId: "pocket-money-pro-bef26",
+            storageBucket: "pocket-money-pro-bef26.appspot.com",
+            messagingSenderId: "3482377371",
+            appId: "1:3482377371:web:a627dcfe45adc3e507ba3e",
+            measurementId: "G-8JYGC81XET"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
         // Make Firebase functions available globally
